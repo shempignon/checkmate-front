@@ -1,21 +1,40 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from 'react'
+import { connect } from 'react-redux'  
+import {
+  component as Character,
+  actions as characterActions,
+  selectors as characterSel
+} from './character/index'
+import {
+  component as Brackets,
+  selectors as bracketsSel
+} from './brackets/index'
 
-class App extends Component {
-  render() {
+const { characterUpdate, characterFetch } = characterActions
+
+function App({ name, realm, brackets, characterUpdate, characterFetch }) {
     return (
-      <div className="App">
-        <div className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to React</h2>
-        </div>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-      </div>
-    );
-  }
+      <main>
+        <Character
+          name={name}
+          realm={realm}
+          characterUpdate={characterUpdate}
+        characterFetch={characterFetch}
+        />
+        <Brackets brackets={brackets} />
+      </main>
+    )
 }
 
-export default App;
+const enhance = connect(
+  state => ({
+    name: characterSel.name(state),
+    realm: characterSel.realm(state),
+    brackets: Object.values(bracketsSel.brackets(state)),
+  }),
+  {
+    characterUpdate,
+    characterFetch,
+  }
+)
+export default enhance(App)

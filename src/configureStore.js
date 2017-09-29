@@ -1,5 +1,7 @@
+/* global devToolsExtension:false */
+
 import { createLogicMiddleware } from 'redux-logic'
-import { createStore, applyMiddleware } from 'redux'
+import { compose, createStore, applyMiddleware } from 'redux'
 import 'rxjs/Observable'
 import 'rxjs/add/operator/catch'
 import 'rxjs/add/operator/map'
@@ -15,8 +17,12 @@ const logicMiddleware = createLogicMiddleware(logic, dependencies)
 
 const middleware = applyMiddleware(logicMiddleware)
 
+const enhancer = (typeof devToolsExtension !== 'undefined')
+  ? compose(middleware, devToolsExtension())
+  : middleware
+
 export default function configureStore() {
-        const store = createStore(rootReducer, middleware)
+        const store = createStore(rootReducer, enhancer)
 
         return store
 }
